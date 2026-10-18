@@ -39,10 +39,10 @@ export const emptyHighlight = (): Highlight => ({
 export const edgeKey = (a: string, b: string) => `${a}->${b}`
 
 export const OUTCOME_COLOR: Record<string, string> = {
-  ANSWER_WITH_PATH: '#34d399',
-  STALE: '#f87171',
-  CONTESTED: '#fbbf24',
-  UNKNOWN_NO_PATH: '#94a3b8',
+  ANSWER_WITH_PATH: '#3fa66b',
+  STALE: '#e5484d',
+  CONTESTED: '#d9961a',
+  UNKNOWN_NO_PATH: '#6b6b80',
 }
 
 export const OUTCOME_HELP: Record<string, string> = {
@@ -53,19 +53,19 @@ export const OUTCOME_HELP: Record<string, string> = {
 }
 
 export const STATUS_COLOR: Record<string, string> = {
-  CONFIRMED: '#2dd4bf',
-  PROPOSED: '#60a5fa',
-  CONTESTED: '#fbbf24',
-  INVALIDATED: '#ef4444',
-  SUPERSEDED: '#8b8fa8',
-  QUARANTINED: '#e879f9',
+  CONFIRMED: '#3fa66b',
+  PROPOSED: '#4a7bd0',
+  CONTESTED: '#e0a21b',
+  INVALIDATED: '#e5484d',
+  SUPERSEDED: '#a3a3b2',
+  QUARANTINED: '#c457c9',
 }
 
 export const LABEL_COLOR: Record<string, string> = {
-  Source: '#f59e0b',
-  Decision: '#a78bfa',
-  Person: '#f472b6',
-  System: '#22d3ee',
-  Team: '#64748b',
-  Answer: '#cbd5e1',
+  Source: '#f6c945',
+  Decision: '#a58ff0',
+  Person: '#f39bbf',
+  System: '#7fd3df',
+  Team: '#a3a3b2',
+  Answer: '#d9d4c7',
 }

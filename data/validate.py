@@ -57,9 +57,9 @@ def validate(data: dict) -> list[str]:
 
     support = Counter(r["claim"] for r in e["DERIVED_FROM"])
     for c in data["claims"]:
-        if not 1 <= support[c["id"]] <= 3:
-            errors.append(f"{c['id']} has {support[c['id']]} DERIVED_FROM targets (need 1-3)")
-    if len({r["claim"] for r in e["ABOUT"]}) != len(data["claims"]):
+        if support[c["id"]] < 1:
+            errors.append(f"{c['id']} has no DERIVED_FROM target; every claim needs a reason")
+    if data["tenant"] in ("northwind", "bluefin") and len({r["claim"] for r in e["ABOUT"]}) != len(data["claims"]):
         errors.append("every claim needs exactly one ABOUT system")
 
     if data["tenant"] == "northwind":

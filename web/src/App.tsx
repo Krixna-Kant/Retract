@@ -41,7 +41,7 @@ export default function App() {
       setVersion((v) => v + 1)
       setError('')
     } catch (e) {
-      setError(`Backend not reachable: ${e}. Start it with: uvicorn api.main:app --port 8000`)
+      setError(`Backend not reachable (${e}). Start it with: python run.py`)
     }
   }, [tenant])
 
@@ -105,12 +105,12 @@ export default function App() {
   return (
     <div className="app">
       <header>
-        <div className="brand">
-          <div className="logo">
-            RE<span>TRACT</span>
-          </div>
-          <div className="tag">truth maintenance for agent memory · on FalkorDB</div>
-        </div>
+        <a className="brand" href="#/">
+          <span className="logo">
+            <span className="logo-dot">R</span>
+            Retract
+          </span>
+        </a>
         <div className="status-strip">
           {meta &&
             Object.entries(meta.status as Record<string, number>).map(([s, n]) => (
@@ -119,26 +119,19 @@ export default function App() {
               </span>
             ))}
         </div>
-        <div className="agents">
-          {meta?.agents.map((a: Json) => (
-            <span key={a.id} className="agent" title={a.role}>
-              {a.id.replace('agent:', '')}
-            </span>
-          ))}
-        </div>
         <div className="controls">
-          <span className={`mode ${meta?.llm ? 'llm' : ''}`} title="LLM provider for routing and phrasing. Outcomes are always computed from the graph.">
-            {meta?.llm ? `LLM: ${meta.llm}` : 'offline router'}
+          <span className={`mode ${meta?.llm ? 'llm' : ''}`} title="LLM used for extraction and phrasing. Outcomes are always computed from the graph.">
+            {meta?.llm ? meta.llm : 'offline'}
           </span>
           <select value={tenant} onChange={(e) => setTenant(e.target.value)} title="Each tenant is its own FalkorDB graph">
             {(meta?.tenants ?? ['northwind']).filter((t: string) => !t.startsWith('eval') && !t.startsWith('test')).map((t: string) => (
               <option key={t} value={t}>
-                tenant_{t}
+                {t}
               </option>
             ))}
           </select>
-          <button className="ghost small" onClick={reset}>
-            Reset demo
+          <button className="ghost small" onClick={reset} title="Reload the demo graph">
+            Reset
           </button>
         </div>
       </header>
@@ -173,13 +166,6 @@ export default function App() {
             onPreview={previewFromAnywhere}
             onHighlight={(n, e) => trace(n, e, true)}
           />
-          <div className="lifecycle">
-            claim lifecycle: <b style={{ color: STATUS_COLOR.PROPOSED }}>PROPOSED</b> →{' '}
-            <b style={{ color: STATUS_COLOR.CONFIRMED }}>CONFIRMED</b> (2 independent roots) ·{' '}
-            <b style={{ color: STATUS_COLOR.CONTESTED }}>CONTESTED</b> (live rival) · loses all support →{' '}
-            <b style={{ color: STATUS_COLOR.INVALIDATED }}>INVALIDATED</b> / <b style={{ color: STATUS_COLOR.SUPERSEDED }}>SUPERSEDED</b> /{' '}
-            <b style={{ color: STATUS_COLOR.QUARANTINED }}>QUARANTINED</b> · rollback re-grounds
-          </div>
         </section>
         <section className="right">
           <nav className="tabs">

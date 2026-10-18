@@ -253,6 +253,23 @@ def ingest(body: IngestIn):
     return guard(ingest_agent.ingest, G(body.tenant), body.model_dump(exclude={"tenant"}))
 
 
+class ImportIn(BaseModel):
+    tenant: str = Field(pattern=r"^[a-z0-9_]{1,40}$")
+    data: dict
+
+
+@app.post("/api/import")
+def import_dataset(body: ImportIn):
+    """Load your own company graph (same shape as data/template.json) into its own tenant."""
+    if body.tenant.startswith(("eval", "test")):
+        raise HTTPException(400, "tenant names starting with eval/test are reserved")
+    from data.load import load
+    try:
+        return load(body.data, body.tenant)
+    except (ValueError, KeyError) as e:
+        raise HTTPException(400, f"dataset rejected: {e}")
+
+
 class ResetIn(BaseModel):
     tenant: str = "northwind"
 

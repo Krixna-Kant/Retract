@@ -27,7 +27,41 @@ def _ts(date: str) -> int:
     return int(datetime.fromisoformat(date).replace(tzinfo=timezone.utc).timestamp())
 
 
+EDGE_TYPES = ("DERIVED_FROM", "ABOUT", "OWNS", "AUTHORED", "MEMBER_OF", "SUPPORTED_BY", "RECORDED_IN")
+DEFAULTS = {
+    "teams": {"name": ""},
+    "people": {"team": "", "email": ""},
+    "systems": {"aliases": []},
+    "agents": {"role": ""},
+    "sources": {"kind": "SLACK", "title": "", "text": "", "ts": "2026-01-01", "trust": 0.7, "sender": "", "planted": ""},
+    "claims": {"key": None, "value": None, "planted": ""},
+    "decisions": {"status": "ACTIVE", "date": "", "planted": ""},
+    "answers": {"ts": "2026-01-01", "outcome": "", "cited": []},
+}
+
+
+def prepare(data: dict, tenant: str | None = None) -> dict:
+    """Fill optional fields so a hand-written dataset only needs ids and links."""
+    out = {"tenant": tenant or data.get("tenant") or "custom", "history": list(data.get("history", []))}
+    for key, d in DEFAULTS.items():
+        out[key] = [{**d, **row} for row in data.get(key, [])]
+    for s in out["sources"]:
+        s["title"] = s["title"] or s["id"]
+        s["kind"] = s["kind"].upper()
+    for p in out["people"]:
+        p.setdefault("name", p["id"])
+    for x in out["systems"] + out["teams"]:
+        x["name"] = x.get("name") or x["id"]
+    for dec in out["decisions"]:
+        dec.setdefault("title", dec["id"])
+    ids = {a["id"] for a in out["agents"]}
+    out["agents"] += [{"id": a, "role": a.split(":")[1]} for a in ("agent:ingest", "agent:answer", "agent:auditor") if a not in ids]
+    out["edges"] = {t: list(data.get("edges", {}).get(t, [])) for t in EDGE_TYPES}
+    return out
+
+
 def load(data: dict, tenant: str | None = None) -> dict:
+    data = prepare(data, tenant)
     errors = validate(data)
     if errors:
         raise ValueError("dataset invalid:\n" + "\n".join(errors))
@@ -94,5 +128,11 @@ def load_all() -> list[dict]:
 
 
 if __name__ == "__main__":
-    for r in load_all():
-        print(json.dumps(r, indent=1))
+    # python -m data.load                         demo tenants
+    # python -m data.load my_company.json acme    your own data into tenant_acme
+    if len(sys.argv) > 1:
+        dataset = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+        print(json.dumps(load(dataset, sys.argv[2] if len(sys.argv) > 2 else None), indent=1))
+    else:
+        for r in load_all():
+            print(json.dumps(r, indent=1))

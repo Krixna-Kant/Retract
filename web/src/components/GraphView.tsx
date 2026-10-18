@@ -15,17 +15,17 @@ type Props = {
 
 const SIZE: Record<string, number> = { Claim: 4, Source: 5.5, Decision: 6, System: 7, Person: 4.2, Team: 6, Answer: 3 }
 const LINK_COLOR: Record<string, string> = {
-  DERIVED_FROM: 'rgba(148,163,184,0.22)',
-  SUPPORTED_BY: 'rgba(167,139,250,0.25)',
-  SUPERSEDES: 'rgba(167,139,250,0.7)',
-  CONTRADICTS: 'rgba(251,191,36,0.75)',
-  ABOUT: 'rgba(34,211,238,0.10)',
-  OWNS: 'rgba(244,114,182,0.14)',
-  AUTHORED: 'rgba(245,158,11,0.10)',
-  MEMBER_OF: 'rgba(100,116,139,0.10)',
-  CITED: 'rgba(203,213,225,0.18)',
-  RECORDED_IN: 'rgba(167,139,250,0.18)',
-  ASKED: 'rgba(203,213,225,0.10)',
+  DERIVED_FROM: 'rgba(34,34,59,0.22)',
+  SUPPORTED_BY: 'rgba(138,111,214,0.30)',
+  SUPERSEDES: 'rgba(138,111,214,0.8)',
+  CONTRADICTS: 'rgba(217,150,26,0.85)',
+  ABOUT: 'rgba(34,34,59,0.07)',
+  OWNS: 'rgba(217,97,154,0.16)',
+  AUTHORED: 'rgba(217,150,26,0.12)',
+  MEMBER_OF: 'rgba(34,34,59,0.07)',
+  CITED: 'rgba(34,34,59,0.14)',
+  RECORDED_IN: 'rgba(138,111,214,0.2)',
+  ASKED: 'rgba(34,34,59,0.07)',
 }
 const ALL_LABELS = ['Claim', 'Source', 'Decision', 'System', 'Person', 'Team', 'Answer']
 
@@ -117,8 +117,8 @@ export default function GraphView({ nodes, links, highlight, focusKey, onNodeCli
   }
   const edgeColor = (l: GLink) => {
     const a = idOf(l.source)
-    if (highlight.mode === 'cascade') return highlight.survived.has(a) && !highlight.invalid.has(a) ? '#34d399' : '#f87171'
-    return '#facc15'
+    if (highlight.mode === 'cascade') return highlight.survived.has(a) && !highlight.invalid.has(a) ? '#3fa66b' : '#e5484d'
+    return '#2f5aa8'
   }
 
   return (
@@ -136,7 +136,7 @@ export default function GraphView({ nodes, links, highlight, focusKey, onNodeCli
           `<div class="tip"><b>${n.label} · ${n.id}</b>${n.status ? ` <i>${n.status}</i>` : ''}<br/>${(n.name ?? '').slice(0, 140)}</div>`
         }
         onNodeClick={(n: GNode) => onNodeClick(n.id)}
-        linkColor={(l: GLink) => (edgeOn(l) ? edgeColor(l) : active ? 'rgba(148,163,184,0.06)' : LINK_COLOR[l.type] ?? '#334')}
+        linkColor={(l: GLink) => (edgeOn(l) ? edgeColor(l) : active ? 'rgba(34,34,59,0.05)' : LINK_COLOR[l.type] ?? 'rgba(34,34,59,0.1)')}
         linkWidth={(l: GLink) => (edgeOn(l) ? 2.4 : l.type === 'SUPERSEDES' || l.type === 'CONTRADICTS' ? 1.4 : 0.6)}
         linkLineDash={(l: GLink) => (l.type === 'CONTRADICTS' ? [3, 2] : null)}
         linkDirectionalArrowLength={(l: GLink) => (edgeOn(l) || l.type === 'SUPERSEDES' ? 4 : 0)}
@@ -151,23 +151,25 @@ export default function GraphView({ nodes, links, highlight, focusKey, onNodeCli
           const r = SIZE[n.label] ?? 4
           const on = highlight.nodes.has(n.id) || highlight.invalid.has(n.id) || highlight.survived.has(n.id)
           const dead = (n.label === 'Source' && (n.revoked || n.quarantined)) || ['INVALIDATED', 'SUPERSEDED', 'QUARANTINED', 'REVERSED'].includes(n.status ?? '')
-          ctx.globalAlpha = active && !on && n.id !== selected ? 0.13 : dead ? 0.55 : 1
+          ctx.globalAlpha = active && !on && n.id !== selected ? 0.15 : dead ? 0.5 : 1
           if (on || n.id === selected) {
-            const glow = highlight.invalid.has(n.id) ? '#ef4444' : highlight.survived.has(n.id) ? '#34d399' : n.id === highlight.target ? '#ffffff' : '#facc15'
-            ctx.shadowColor = glow
-            ctx.shadowBlur = 14
-            shape(ctx, n.label, x, y, r + 2.6)
-            ctx.strokeStyle = glow
-            ctx.lineWidth = 1.8
+            const ring = highlight.invalid.has(n.id) ? '#e5484d' : highlight.survived.has(n.id) ? '#3fa66b' : n.id === highlight.target ? '#22223b' : '#2f5aa8'
+            shape(ctx, n.label, x, y, r + 3)
+            ctx.strokeStyle = ring
+            ctx.lineWidth = 2
+            ctx.setLineDash([2.5, 1.8])
             ctx.stroke()
-            ctx.shadowBlur = 0
+            ctx.setLineDash([])
           }
           shape(ctx, n.label, x, y, r)
-          ctx.fillStyle = n.label === 'Claim' ? STATUS_COLOR[n.status ?? 'PROPOSED'] ?? '#60a5fa' : n.label === 'Decision' && n.status !== 'ACTIVE' ? '#5b5675' : LABEL_COLOR[n.label] ?? '#999'
-          if (n.label === 'Source' && n.trust !== undefined && n.trust < 0.3) ctx.fillStyle = '#fb7185'
+          ctx.fillStyle = n.label === 'Claim' ? STATUS_COLOR[n.status ?? 'PROPOSED'] ?? '#4a7bd0' : n.label === 'Decision' && n.status !== 'ACTIVE' ? '#cfc8e6' : LABEL_COLOR[n.label] ?? '#bbb'
+          if (n.label === 'Source' && n.trust !== undefined && n.trust < 0.3) ctx.fillStyle = '#f39b9d'
           ctx.fill()
+          ctx.strokeStyle = '#22223b'
+          ctx.lineWidth = Math.min(1.2, 1.6 / Math.max(scale, 1))
+          ctx.stroke()
           if (dead && n.label === 'Source') {
-            ctx.strokeStyle = '#ef4444'
+            ctx.strokeStyle = '#e5484d'
             ctx.lineWidth = 1.4
             ctx.beginPath()
             ctx.moveTo(x - r, y - r)
@@ -179,10 +181,10 @@ export default function GraphView({ nodes, links, highlight, focusKey, onNodeCli
           if (on || n.id === selected || scale > 2.6 || (n.label === 'System' && scale > 1.1)) {
             const text = n.label === 'Claim' || n.label === 'Source' || n.label === 'Decision' ? n.id : n.name
             const fs = Math.max(10 / scale, 2.2)
-            ctx.font = `${on ? 600 : 400} ${fs}px Inter, system-ui, sans-serif`
+            ctx.font = `${fs * 1.15}px 'Patrick Hand', cursive`
             ctx.textAlign = 'center'
             ctx.textBaseline = 'top'
-            ctx.fillStyle = on ? '#f8fafc' : 'rgba(226,232,240,0.75)'
+            ctx.fillStyle = on ? '#22223b' : 'rgba(34,34,59,0.7)'
             ctx.fillText(text, x, y + r + 2)
           }
           ctx.globalAlpha = 1
@@ -218,7 +220,7 @@ export default function GraphView({ nodes, links, highlight, focusKey, onNodeCli
         <span><i className="dot" style={{ background: STATUS_COLOR.INVALIDATED }} />invalidated</span>
         <span><i className="dot" style={{ background: STATUS_COLOR.SUPERSEDED }} />superseded</span>
         <span><i className="dot" style={{ background: STATUS_COLOR.QUARANTINED }} />quarantined</span>
-        <span><i className="sq" style={{ background: LABEL_COLOR.Source }} />source</span>
+        <span><i style={{ background: LABEL_COLOR.Source }} />source</span>
         <span><i className="dia" style={{ background: LABEL_COLOR.Decision }} />decision</span>
         <span><i className="hex" style={{ background: LABEL_COLOR.System }} />system</span>
         <span><i className="dot" style={{ background: LABEL_COLOR.Person }} />person</span>

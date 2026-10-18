@@ -5,6 +5,7 @@ pydantic>=2.5
 langgraph>=0.2.50
 python-dotenv>=1.0
 pytest>=8.0
+mcp>=1.10
 # LLM providers: Gemini via google-genai; Groq and OpenAI via openai. Optional: anthropic
 google-genai>=1.0
 openai>=1.40

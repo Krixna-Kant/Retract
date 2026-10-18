@@ -1,0 +1,35 @@
+{
+  "tenant": "acme",
+  "teams": [{"id": "T-PLAT", "name": "Platform"}],
+  "people": [
+    {"id": "P-ANA", "name": "Ana Silva", "team": "T-PLAT", "email": "ana@acme.dev"},
+    {"id": "P-RAJ", "name": "Raj Mehta", "team": "T-PLAT", "email": "raj@acme.dev"}
+  ],
+  "systems": [{"id": "SYS-PAY", "name": "payments-api", "aliases": ["payments"]}],
+  "sources": [
+    {"id": "SRC-ADR-1", "kind": "ADR", "title": "ADR-1: Use Stripe", "text": "payments-api uses Stripe for card processing.", "ts": "2026-03-01", "trust": 0.9},
+    {"id": "SRC-SLACK-1", "kind": "SLACK", "title": "#payments thread", "text": "Refunds settle in 5 days on Stripe.", "ts": "2026-04-02", "trust": 0.6},
+    {"id": "SRC-EMAIL-1", "kind": "EMAIL", "title": "Vendor email", "text": "Stripe confirmed 5 day refund settlement.", "ts": "2026-04-05", "trust": 0.8}
+  ],
+  "claims": [
+    {"id": "C-1", "text": "payments-api uses Stripe for card processing", "key": "payments-api.provider", "value": "stripe"},
+    {"id": "C-2", "text": "Refunds on payments-api settle in 5 days", "key": "payments-api.refund_settlement", "value": "5d"},
+    {"id": "C-3", "text": "Support can promise refunds within a week", "key": null, "value": null}
+  ],
+  "decisions": [{"id": "DEC-1", "title": "Promise 7-day refunds to customers", "status": "ACTIVE", "date": "2026-04-10"}],
+  "history": [],
+  "edges": {
+    "DERIVED_FROM": [
+      {"claim": "C-1", "target": "SRC-ADR-1"},
+      {"claim": "C-2", "target": "SRC-SLACK-1"},
+      {"claim": "C-2", "target": "SRC-EMAIL-1"},
+      {"claim": "C-3", "target": "C-2"}
+    ],
+    "ABOUT": [{"claim": "C-1", "system": "SYS-PAY"}, {"claim": "C-2", "system": "SYS-PAY"}, {"claim": "C-3", "system": "SYS-PAY"}],
+    "OWNS": [{"person": "P-ANA", "target": "SYS-PAY"}, {"person": "P-RAJ", "target": "DEC-1"}],
+    "AUTHORED": [{"person": "P-ANA", "source": "SRC-ADR-1"}, {"person": "P-RAJ", "source": "SRC-SLACK-1"}],
+    "MEMBER_OF": [{"person": "P-ANA", "team": "T-PLAT"}, {"person": "P-RAJ", "team": "T-PLAT"}],
+    "SUPPORTED_BY": [{"decision": "DEC-1", "claim": "C-3"}],
+    "RECORDED_IN": []
+  }
+}

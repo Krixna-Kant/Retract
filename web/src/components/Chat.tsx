@@ -121,10 +121,6 @@ export default function Chat({ tenant, people, onStep, onAnswer, onNodeClick, on
       <div className="chat-log">
         {msgs.length === 0 && (
           <div className="chat-empty">
-            <p>
-              Ask the <b>answer agent</b>. It can only call fixed graph tools, and every answer carries the
-              DERIVED_FROM path that justifies it, or says why there is none.
-            </p>
             <div className="suggestions">
               {SUGGESTIONS.map((s) => (
                 <button key={s} className="chip" onClick={() => ask(s)}>

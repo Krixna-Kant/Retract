@@ -4,8 +4,37 @@
 > every claim, decision and answer built on it should go stale, except the ones that still have independent
 > support. RETRACT does that with graph traversal in FalkorDB.
 
-Built for the WeMakeDevs × FalkorDB **Graph Hacks** hackathon.
-Tracks: **1 (Agentic memory)**, **2 (GraphRAG / knowledge graphs)**, **3 (Graph-native analytics)**.
+Built for the WeMakeDevs × FalkorDB **Graph Hacks** hackathon. Entered in all three tracks:
+**01 Agents That Act on Connected Data**, **03 Company Brain** and **02 Agent Memory and Coordination**.
+
+## How it maps to the tracks
+
+**Track 01: Agents That Act on Connected Data**
+* *Multi-hop reasoning:* the cascade follows variable-length `DERIVED_FROM` paths (up to 8 hops) through live claims only.
+* *Graph queries and algorithms as agent tools:* 14 fixed tools, including grounded support paths, cascade
+  preview, `algo.pageRank`, blast radius and bus factor. The LLM never writes Cypher.
+* *Tool selection through MCP:* `python -m retract.mcp_server` exposes every tool to any MCP client (see below).
+* *Actions based on what the graph shows:* revoke, quarantine or reverse goes through an approval gate. Approving
+  invalidates exactly the claims that lost support, drafts notifications to the owners, and can be rolled back.
+* *Explainable results:* every answer and every cascade carries the path that justifies it.
+
+**Track 03: Company Brain**
+* *Docs, tickets and chats in one graph:* ADRs, Slack, email, postmortems and memos, linked to people, teams,
+  systems and decisions.
+* *Who owns what, who knows what:* `OWNS` and `AUTHORED` edges, the `who_knows` tool and bus-factor analysis.
+* *Tracing decisions back to their source:* Decision → `SUPPORTED_BY` → Claim → `DERIVED_FROM` → Source, plus the
+  `SUPERSEDES` history.
+* *Keeping knowledge current as things change:* the core idea. A retraction or a reversal invalidates exactly what
+  depended on it, and nothing more.
+* *Answers with clear sources:* `ANSWER_WITH_PATH`, `STALE`, `CONTESTED` or `UNKNOWN_NO_PATH`, always with
+  citations.
+
+**Track 02: Agent Memory and Coordination**
+* *Shared state between agents:* the ingest, auditor and answer agents (plus any MCP agent) read and write one graph.
+* *Semantic and episodic memory:* claims are semantic memory. Every answer is stored with `CITED` edges, so past
+  answers go stale when their sources die.
+* *Memory that updates over time:* claims move PROPOSED → CONFIRMED / CONTESTED → INVALIDATED, with rollback.
+* *Separate memory per tenant:* one FalkorDB graph per company (`tenant_<name>`).
 
 ## Quick start (one command)
 
@@ -106,6 +135,41 @@ and a conflicting value is flagged CONTESTED.
 
 **Multi-tenant.** One FalkorDB graph per tenant (`tenant_northwind`, `tenant_bluefin`), isolated at the graph level.
 
+## Use it from any agent (MCP)
+
+```json
+{
+  "mcpServers": {
+    "retract": { "command": "python", "args": ["-m", "retract.mcp_server"], "cwd": "/path/to/Retract_Graph" }
+  }
+}
+```
+
+Add this to Claude Desktop, Cursor or any MCP client. The tools are `ask`, `search_claims`, `explain_support`,
+`decision_status`, `who_knows`, `trace_source`, `preview_revocation`, `blast_radius`, `foundational_sources`,
+`bus_factor`, `request_action`, `list_actions`, `ingest_document` and `list_company_graphs`. MCP agents can request
+writes but cannot approve them. A human approves in the UI or via `POST /api/actions/{id}/approve`.
+
+## Use your own data
+
+Each company gets its own isolated graph. There are two ways in:
+
+1. **Load your org.** Copy [`data/template.json`](data/template.json), a small example with people, systems,
+   sources, claims, a decision and their links. Only ids and links are required; everything else has defaults.
+   ```bash
+   python -m data.load my_company.json acme        # or POST /api/import {"tenant": "acme", "data": {...}}
+   ```
+   The dataset is validated first. Every claim must have at least one `DERIVED_FROM` reason.
+2. **Keep it current.** Send new documents to `POST /api/ingest` (or the `ingest_document` MCP tool). Claims are
+   extracted (by an LLM if a key is set), linked to their source and to systems mentioned by name, merged with
+   matching memory, and contradictions are flagged.
+
+Then pick the tenant in the UI, ask questions, and preview what a retraction would break.
+
+What it doesn't do yet: there are no connectors that pull from Slack, Drive or Jira automatically (send their text
+to `/api/ingest`), and no authentication. Without an LLM key, the rule-based extractor only knows a fixed list of
+attributes.
+
 ## Demo data
 
 `data/generate.py` builds a deterministic synthetic company, *Northwind Labs*: 20 people, 10 systems,
@@ -148,8 +212,8 @@ results are in [`eval/results.md`](eval/results.md). Tests: `python -m pytest -q
 
 * J. Doyle, *A Truth Maintenance System*, Artificial Intelligence 12 (1979). Justification-based TMS and
   well-founded support.
-* STALE (arXiv 2605.06527) and RECON (arXiv 2607.16716) study stale and conflicting memory in LLM agents.
-  RETRACT makes the dependency structure explicit in a graph, so invalidation is a query, not a guess.
+* Most agent memory stores rank by similarity and recency. RETRACT instead makes the dependency structure explicit
+  in a graph, so invalidation is a query, not a guess.
 
 ## Layout
 
@@ -157,6 +221,7 @@ results are in [`eval/results.md`](eval/results.md). Tests: `python -m pytest -q
 retract/engine.py      grounded support, cascade preview/apply/rollback, analytics
 retract/tools.py       the fixed tool set the agents may call
 retract/agents/        answer (LangGraph), ingest, auditor
+retract/mcp_server.py  the same tools over MCP
 retract/llm.py         provider chain: Groq → Gemini → OpenAI → Anthropic, with fallback
 api/main.py            FastAPI (SSE streaming answers) + serves the built UI
 web/                   React + react-force-graph-2d

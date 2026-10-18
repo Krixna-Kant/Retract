@@ -119,6 +119,8 @@ def main() -> None:
     ap.add_argument("--no-docker", action="store_true", help="never start FalkorDB with docker")
     args = ap.parse_args()
 
+    if reachable("127.0.0.1" if args.host == "0.0.0.0" else args.host, args.port):
+        sys.exit(f"[retract] port {args.port} is already in use (an older server?). Stop it, or use --port {args.port + 1}")
     ensure_falkordb(start_docker=not args.no_docker)
     if not args.no_build:
         ensure_ui()
