@@ -1,0 +1,956 @@
+{
+  "llm_provider": null,
+  "summary": {
+    "keyword_topk": {
+      "precision": 0.63,
+      "recall": 0.472,
+      "f1": 0.54,
+      "exact": 5,
+      "cases": 16
+    },
+    "one_hop": {
+      "precision": 0.667,
+      "recall": 0.5,
+      "f1": 0.571,
+      "exact": 4,
+      "cases": 16
+    },
+    "transitive": {
+      "precision": 0.766,
+      "recall": 1.0,
+      "f1": 0.867,
+      "exact": 10,
+      "cases": 16
+    },
+    "naive_fixpoint": {
+      "precision": 1.0,
+      "recall": 0.889,
+      "f1": 0.941,
+      "exact": 14,
+      "cases": 16
+    },
+    "retract": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "exact": 16,
+      "cases": 16
+    }
+  },
+  "cases": [
+    {
+      "scenario": "01_single_hop",
+      "gold": [
+        "C1"
+      ],
+      "keyword_topk": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "one_hop": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "transitive": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "naive_fixpoint": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "retract": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      }
+    },
+    {
+      "scenario": "02_multi_hop",
+      "gold": [
+        "C1",
+        "C2",
+        "C3"
+      ],
+      "keyword_topk": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 2,
+        "exact": false
+      },
+      "one_hop": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 2,
+        "exact": false
+      },
+      "transitive": {
+        "pred": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "naive_fixpoint": {
+        "pred": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "retract": {
+        "pred": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      }
+    },
+    {
+      "scenario": "03_independent_support_survives",
+      "gold": [],
+      "keyword_topk": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "exact": false
+      },
+      "one_hop": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "exact": false
+      },
+      "transitive": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "exact": false
+      },
+      "naive_fixpoint": {
+        "pred": [],
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "retract": {
+        "pred": [],
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      }
+    },
+    {
+      "scenario": "04_shared_support",
+      "gold": [
+        "C1",
+        "C3"
+      ],
+      "keyword_topk": {
+        "pred": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "tp": 2,
+        "fp": 1,
+        "fn": 0,
+        "exact": false
+      },
+      "one_hop": {
+        "pred": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "tp": 2,
+        "fp": 1,
+        "fn": 0,
+        "exact": false
+      },
+      "transitive": {
+        "pred": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "tp": 2,
+        "fp": 1,
+        "fn": 0,
+        "exact": false
+      },
+      "naive_fixpoint": {
+        "pred": [
+          "C1",
+          "C3"
+        ],
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "retract": {
+        "pred": [
+          "C1",
+          "C3"
+        ],
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      }
+    },
+    {
+      "scenario": "05_implicit_dependency",
+      "gold": [
+        "C1",
+        "C2",
+        "C3"
+      ],
+      "keyword_topk": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 2,
+        "exact": false
+      },
+      "one_hop": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 2,
+        "exact": false
+      },
+      "transitive": {
+        "pred": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "naive_fixpoint": {
+        "pred": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "retract": {
+        "pred": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      }
+    },
+    {
+      "scenario": "06_diamond",
+      "gold": [
+        "C1",
+        "C2",
+        "C3"
+      ],
+      "keyword_topk": {
+        "pred": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "one_hop": {
+        "pred": [
+          "C1",
+          "C2"
+        ],
+        "tp": 2,
+        "fp": 0,
+        "fn": 1,
+        "exact": false
+      },
+      "transitive": {
+        "pred": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "naive_fixpoint": {
+        "pred": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "retract": {
+        "pred": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      }
+    },
+    {
+      "scenario": "07_diamond_with_rescue",
+      "gold": [
+        "C1"
+      ],
+      "keyword_topk": {
+        "pred": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "tp": 1,
+        "fp": 2,
+        "fn": 0,
+        "exact": false
+      },
+      "one_hop": {
+        "pred": [
+          "C1",
+          "C2"
+        ],
+        "tp": 1,
+        "fp": 1,
+        "fn": 0,
+        "exact": false
+      },
+      "transitive": {
+        "pred": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "tp": 1,
+        "fp": 2,
+        "fn": 0,
+        "exact": false
+      },
+      "naive_fixpoint": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "retract": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      }
+    },
+    {
+      "scenario": "08_circular_support",
+      "gold": [
+        "C1",
+        "C2"
+      ],
+      "keyword_topk": {
+        "pred": [
+          "C1",
+          "C2"
+        ],
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "one_hop": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 1,
+        "exact": false
+      },
+      "transitive": {
+        "pred": [
+          "C1",
+          "C2"
+        ],
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "naive_fixpoint": {
+        "pred": [],
+        "tp": 0,
+        "fp": 0,
+        "fn": 2,
+        "exact": false
+      },
+      "retract": {
+        "pred": [
+          "C1",
+          "C2"
+        ],
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      }
+    },
+    {
+      "scenario": "09_circular_with_real_root",
+      "gold": [],
+      "keyword_topk": {
+        "pred": [
+          "C1",
+          "C2"
+        ],
+        "tp": 0,
+        "fp": 2,
+        "fn": 0,
+        "exact": false
+      },
+      "one_hop": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "exact": false
+      },
+      "transitive": {
+        "pred": [
+          "C1",
+          "C2"
+        ],
+        "tp": 0,
+        "fp": 2,
+        "fn": 0,
+        "exact": false
+      },
+      "naive_fixpoint": {
+        "pred": [],
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "retract": {
+        "pred": [],
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      }
+    },
+    {
+      "scenario": "10_decision_reversal",
+      "gold": [
+        "C1",
+        "C2"
+      ],
+      "keyword_topk": {
+        "pred": [],
+        "tp": 0,
+        "fp": 0,
+        "fn": 2,
+        "exact": false
+      },
+      "one_hop": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 1,
+        "exact": false
+      },
+      "transitive": {
+        "pred": [
+          "C1",
+          "C2"
+        ],
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "naive_fixpoint": {
+        "pred": [
+          "C1",
+          "C2"
+        ],
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "retract": {
+        "pred": [
+          "C1",
+          "C2"
+        ],
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      }
+    },
+    {
+      "scenario": "11_decision_plus_source",
+      "gold": [],
+      "keyword_topk": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "exact": false
+      },
+      "one_hop": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "exact": false
+      },
+      "transitive": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "exact": false
+      },
+      "naive_fixpoint": {
+        "pred": [],
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "retract": {
+        "pred": [],
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      }
+    },
+    {
+      "scenario": "12_dead_intermediate_cannot_rescue",
+      "gold": [
+        "C2"
+      ],
+      "keyword_topk": {
+        "pred": [
+          "C2"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "one_hop": {
+        "pred": [
+          "C2"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "transitive": {
+        "pred": [
+          "C2"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "naive_fixpoint": {
+        "pred": [
+          "C2"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "retract": {
+        "pred": [
+          "C2"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      }
+    },
+    {
+      "scenario": "13_other_support_already_revoked",
+      "gold": [
+        "C1"
+      ],
+      "keyword_topk": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "one_hop": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "transitive": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "naive_fixpoint": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "retract": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      }
+    },
+    {
+      "scenario": "14_deep_chain",
+      "gold": [
+        "C1",
+        "C2",
+        "C3",
+        "C4",
+        "C5",
+        "C6",
+        "C7"
+      ],
+      "keyword_topk": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 6,
+        "exact": false
+      },
+      "one_hop": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 6,
+        "exact": false
+      },
+      "transitive": {
+        "pred": [
+          "C1",
+          "C2",
+          "C3",
+          "C4",
+          "C5",
+          "C6",
+          "C7"
+        ],
+        "tp": 7,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "naive_fixpoint": {
+        "pred": [
+          "C1",
+          "C2",
+          "C3",
+          "C4",
+          "C5",
+          "C6",
+          "C7"
+        ],
+        "tp": 7,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "retract": {
+        "pred": [
+          "C1",
+          "C2",
+          "C3",
+          "C4",
+          "C5",
+          "C6",
+          "C7"
+        ],
+        "tp": 7,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      }
+    },
+    {
+      "scenario": "15_keyword_trap",
+      "gold": [
+        "C1"
+      ],
+      "keyword_topk": {
+        "pred": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "tp": 1,
+        "fp": 2,
+        "fn": 0,
+        "exact": false
+      },
+      "one_hop": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "transitive": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "naive_fixpoint": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      },
+      "retract": {
+        "pred": [
+          "C1"
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      }
+    },
+    {
+      "scenario": "16_northwind_memo (full graph)",
+      "gold": [
+        "C-M05",
+        "C-M06",
+        "C-M07",
+        "C-M08",
+        "C-M09",
+        "C-M10",
+        "C-M11",
+        "C-M12",
+        "C-M13"
+      ],
+      "keyword_topk": {
+        "pred": [
+          "C-042",
+          "C-M09",
+          "C-M13"
+        ],
+        "tp": 2,
+        "fp": 1,
+        "fn": 7,
+        "exact": false
+      },
+      "one_hop": {
+        "pred": [
+          "C-M01",
+          "C-M02",
+          "C-M03",
+          "C-M04",
+          "C-M05",
+          "C-M06",
+          "C-M07",
+          "C-M08"
+        ],
+        "tp": 4,
+        "fp": 4,
+        "fn": 5,
+        "exact": false
+      },
+      "transitive": {
+        "pred": [
+          "C-M01",
+          "C-M02",
+          "C-M03",
+          "C-M04",
+          "C-M05",
+          "C-M06",
+          "C-M07",
+          "C-M08",
+          "C-M09",
+          "C-M10",
+          "C-M11",
+          "C-M12",
+          "C-M13"
+        ],
+        "tp": 9,
+        "fp": 4,
+        "fn": 0,
+        "exact": false
+      },
+      "naive_fixpoint": {
+        "pred": [
+          "C-M05",
+          "C-M06",
+          "C-M07",
+          "C-M08",
+          "C-M09",
+          "C-M10",
+          "C-M11"
+        ],
+        "tp": 7,
+        "fp": 0,
+        "fn": 2,
+        "exact": false
+      },
+      "retract": {
+        "pred": [
+          "C-M05",
+          "C-M06",
+          "C-M07",
+          "C-M08",
+          "C-M09",
+          "C-M10",
+          "C-M11",
+          "C-M12",
+          "C-M13"
+        ],
+        "tp": 9,
+        "fp": 0,
+        "fn": 0,
+        "exact": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "tenant": "bluefin",
+  "company": "Bluefin Health",
+  "teams": [
+    {
+      "id": "T-OPS",
+      "name": "Clinic Ops"
+    }
+  ],
+  "people": [
+    {
+      "id": "P01",
+      "name": "Rosa Imani",
+      "team": "Clinic Ops",
+      "team_id": "T-OPS",
+      "email": "rosa@bluefin.example"
+    },
+    {
+      "id": "P02",
+      "name": "Theo Marsh",
+      "team": "Clinic Ops",
+      "team_id": "T-OPS",
+      "email": "theo@bluefin.example"
+    }
+  ],
+  "systems": [
+    {
+      "id": "SYS-BILL",
+      "name": "billing-service",
+      "aliases": [
+        "billing"
+      ]
+    },
+    {
+      "id": "SYS-SCHED",
+      "name": "scheduler",
+      "aliases": [
+        "appointments"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "SRC-ADR-1",
+      "kind": "ADR",
+      "title": "ADR-1: Paystream for patient billing",
+      "author": "P01",
+      "ts": "2025-02-01",
+      "trust": 0.9,
+      "sender": "",
+      "planted": true,
+      "text": "billing-service uses Paystream as the invoicing provider. Invoices are issued in USD only."
+    },
+    {
+      "id": "SRC-SLACK-1",
+      "kind": "SLACK",
+      "title": "#ops: scheduler reminders",
+      "author": "P02",
+      "ts": "2025-03-04",
+      "trust": 0.6,
+      "sender": "",
+      "planted": true,
+      "text": "scheduler sends appointment reminders 24 hours ahead by SMS."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C-001",
+      "text": "Paystream is the invoicing provider for billing-service",
+      "key": "billing-service.provider",
+      "value": "paystream",
+      "planted": true
+    },
+    {
+      "id": "C-002",
+      "text": "billing-service issues invoices in USD only",
+      "key": "billing-service.currencies",
+      "value": "usd",
+      "planted": true
+    },
+    {
+      "id": "C-003",
+      "text": "scheduler sends appointment reminders 24 hours ahead by SMS",
+      "key": "scheduler.reminders",
+      "value": "24h_sms",
+      "planted": true
+    }
+  ],
+  "decisions": [
+    {
+      "id": "DEC-01",
+      "title": "Adopt Paystream for patient billing",
+      "date": "2025-02-01",
+      "status": "ACTIVE",
+      "planted": true
+    }
+  ],
+  "agents": [
+    {
+      "id": "agent:ingest",
+      "role": "ingest"
+    },
+    {
+      "id": "agent:auditor",
+      "role": "auditor"
+    },
+    {
+      "id": "agent:answer",
+      "role": "answer"
+    }
+  ],
+  "answers": [],
+  "edges": {
+    "DERIVED_FROM": [
+      {
+        "claim": "C-001",
+        "target": "SRC-ADR-1"
+      },
+      {
+        "claim": "C-002",
+        "target": "SRC-ADR-1"
+      },
+      {
+        "claim": "C-003",
+        "target": "SRC-SLACK-1"
+      }
+    ],
+    "ABOUT": [
+      {
+        "claim": "C-001",
+        "system": "SYS-BILL"
+      },
+      {
+        "claim": "C-002",
+        "system": "SYS-BILL"
+      },
+      {
+        "claim": "C-003",
+        "system": "SYS-SCHED"
+      }
+    ],
+    "OWNS": [
+      {
+        "person": "P01",
+        "target": "SYS-BILL"
+      },
+      {
+        "person": "P02",
+        "target": "SYS-SCHED"
+      },
+      {
+        "person": "P01",
+        "target": "DEC-01"
+      }
+    ],
+    "AUTHORED": [
+      {
+        "person": "P01",
+        "source": "SRC-ADR-1"
+      },
+      {
+        "person": "P02",
+        "source": "SRC-SLACK-1"
+      }
+    ],
+    "MEMBER_OF": [
+      {
+        "person": "P01",
+        "team": "T-OPS"
+      },
+      {
+        "person": "P02",
+        "team": "T-OPS"
+      }
+    ],
+    "SUPPORTED_BY": [
+      {
+        "decision": "DEC-01",
+        "claim": "C-001"
+      }
+    ],
+    "RECORDED_IN": [
+      {
+        "decision": "DEC-01",
+        "source": "SRC-ADR-1"
+      }
+    ],
+    "SUPERSEDES": []
+  },
+  "history": []
+}
