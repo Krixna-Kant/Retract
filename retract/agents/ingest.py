@@ -29,6 +29,7 @@ ATTRIBUTES = [
     (r"\bregion|residency|data centre|datacenter", "region"),
     (r"\brate limit|requests per second|\brps\b", "rate_limit"),
     (r"\bsla\b|uptime", "sla"),
+    (r"\bfailover|fail over|recovery time|\brto\b", "failover_time"),
     (r"\bp99|latency", "latency_target"),
     (r"\bprovider|vendor\b", "provider"),
     (r"\breplica", "replicas"),
@@ -73,36 +74,70 @@ def extract_offline(text: str, systems: list[dict]) -> list[dict]:
                 break
         if not sys_hit:
             continue
-        key = None
-        for pattern, attr in ATTRIBUTES:
-            if re.search(pattern, low):
-                key = f"{sys_hit['name']}.{attr}"
-                break
+        key = rule_key(sent, sys_hit["name"])
         out.append({"text": sent.rstrip("."), "system_id": sys_hit["id"], "key": key,
                     "value": _value(sent) if key else None, "depends_on": []})
     return out
+
+
+def rule_key(sentence: str, system_name: str) -> str | None:
+    low = sentence.lower()
+    for pattern, attr in ATTRIBUTES:
+        if re.search(pattern, low):
+            return f"{system_name}.{attr}"
+    return None
+
+
+def normalize_value(value) -> str | None:
+    """Map free-form values onto the graph's canonical form ('15 minutes' -> '15m')."""
+    if value is None:
+        return None
+    v = str(value).strip().lower()
+    canon = _value(v)
+    return canon if not re.fullmatch(r"[0-9a-f]{8}", canon) else v
 
 
 def extract_llm(g, text: str, systems: list[dict]) -> list[dict]:
     hint = rows(g, """
         CALL db.idx.fulltext.queryNodes('Claim', $q) YIELD node, score
         WHERE node.status IN $live
-        RETURN node.id AS id, node.text AS text, node.key AS key LIMIT 15""",
+        RETURN node.id AS id, node.text AS text, node.key AS key, node.value AS value LIMIT 15""",
         {"q": _ft_query(text), "live": LIVE_CLAIM_STATUSES})
+    keys = sorted(r["key"] for r in rows(g, "MATCH (c:Claim) WHERE c.key IS NOT NULL RETURN DISTINCT c.key AS key"))
     prompt = f"""Extract atomic factual claims from the document below.
 Return a JSON array. Each item: {{"text": str, "system_id": one of the system ids or null,
 "key": "<system name>.<attribute in snake_case>" or null, "value": short normalized value or null,
 "depends_on": [ids of EXISTING claims this claim logically relies on, may be empty]}}.
-Use the same key as an existing claim when it is about the same attribute, so contradictions can be found.
-Only include claims stated in the document. At most 8 claims.
+Rules:
+- If the claim is about an attribute that already has a key below, reuse that exact key, so agreements and
+  contradictions with existing memory can be detected. Reuse a key only for exactly the same attribute
+  (failover time is not latency); otherwise make a new key.
+- Values are short and canonical: durations like 15m, 24h, 7d; percentages like 99.99%; URLs verbatim;
+  otherwise one or two lowercase words.
+- Only include claims stated in the document. At most 8 claims.
 
 Systems: {[{"id": s["id"], "name": s["name"]} for s in systems]}
-Existing claims: {hint}
+Existing keys: {keys}
+Related existing claims: {hint}
 
 Document:
 {text}"""
     items = L.llm_json(prompt, system="You extract claims for a knowledge graph. Reply with JSON only.")
-    return items if isinstance(items, list) else []
+    if not isinstance(items, list):
+        return []
+    known = set(keys)
+    names = {s["id"]: s["name"] for s in systems}
+    for it in items:
+        if not isinstance(it, dict):
+            continue
+        sys_name = names.get(it.get("system_id"))
+        rk = rule_key(str(it.get("text", "")), sys_name) if sys_name else None
+        # A key that touches existing memory decides corroboration and contradiction, so when the
+        # LLM and the explicit attribute vocabulary disagree there, the vocabulary wins.
+        if rk and it.get("key") != rk and (rk in known or it.get("key") in known):
+            it["key"] = rk
+        it["value"] = normalize_value(it.get("value"))
+    return [it for it in items if isinstance(it, dict)]
 
 
 def _ft_query(text: str) -> str:

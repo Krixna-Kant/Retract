@@ -9,5 +9,20 @@ services:
       - falkordb_data:/var/lib/falkordb/data
     restart: unless-stopped
 
+  # Full stack in containers: `docker compose up --build`, then open http://localhost:8000
+  app:
+    build: .
+    container_name: retract-app
+    ports:
+      - "8000:8000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      FALKORDB_HOST: falkordb
+      FALKORDB_PORT: "6379"
+    depends_on:
+      - falkordb
+
 volumes:
   falkordb_data:
