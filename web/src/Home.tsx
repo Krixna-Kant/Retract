@@ -293,6 +293,46 @@ export default function Home() {
         ))}
       </section>
 
+      <section className="story">
+        <h2 className="section-title reveal">Bring your own</h2>
+        <div className="byo">
+          <a className="byo-card reveal" href="#/app/connect">
+            <svg viewBox="0 0 120 70" className="byo-art">
+              <g filter="url(#rough)">
+                <rect x="8" y="10" width="40" height="50" rx="5" fill="#e6f4ff" stroke={INK} strokeWidth="2.5" />
+                <path d="M18 24 H38 M18 34 H38 M18 44 H30" stroke={INK} strokeWidth="2" strokeLinecap="round" opacity=".5" />
+                <path d="M56 35 H 78" stroke={INK} strokeWidth="2.5" strokeLinecap="round" />
+                <path d="M72 29 L79 35 L72 41" stroke={INK} strokeWidth="2.5" fill="none" strokeLinecap="round" />
+                <circle cx="96" cy="22" r="8" fill="#c9f2c7" stroke={INK} strokeWidth="2.2" />
+                <circle cx="104" cy="48" r="8" fill="#fff3c4" stroke={INK} strokeWidth="2.2" />
+                <circle cx="86" cy="50" r="6" fill="#ffd9e6" stroke={INK} strokeWidth="2.2" />
+                <path d="M96 30 L102 40 M92 29 L88 44" stroke={INK} strokeWidth="1.8" />
+              </g>
+            </svg>
+            <h3>Your company</h3>
+            <p>Import your people, systems and docs into a graph of their own.</p>
+            <code>python -m data.load my_company.json acme</code>
+          </a>
+          <a className="byo-card reveal" href="#/app/connect">
+            <svg viewBox="0 0 120 70" className="byo-art">
+              <g filter="url(#rough)">
+                <rect x="8" y="16" width="44" height="38" rx="8" fill="#efe9ff" stroke={INK} strokeWidth="2.5" />
+                <circle cx="22" cy="33" r="3" fill={INK} />
+                <circle cx="38" cy="33" r="3" fill={INK} />
+                <path d="M22 44 q8 5 16 0" stroke={INK} strokeWidth="2" fill="none" strokeLinecap="round" />
+                <path d="M30 16 V 8" stroke={INK} strokeWidth="2.5" strokeLinecap="round" />
+                <path d="M58 30 H 74 M58 40 H 74" stroke={INK} strokeWidth="2.5" strokeLinecap="round" />
+                <rect x="78" y="14" width="34" height="42" rx="5" fill="#fff8d6" stroke={INK} strokeWidth="2.5" />
+                <path d="M86 26 H104 M86 35 H104 M86 44 H98" stroke={INK} strokeWidth="2" strokeLinecap="round" opacity=".5" />
+              </g>
+            </svg>
+            <h3>Any agent</h3>
+            <p>Claude, Cursor or your own agent can use every graph tool over MCP.</p>
+            <code>python -m retract.mcp_server</code>
+          </a>
+        </div>
+      </section>
+
       <section id="numbers" className="numbers reveal">
         {NUMBERS.map((x) => (
           <div key={x.l} className="num-box">

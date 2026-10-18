@@ -135,6 +135,26 @@ def eval_results():
     return json.loads(p.read_text(encoding="utf-8"))
 
 
+@app.get("/api/template")
+def dataset_template():
+    return json.loads((ROOT / "data" / "template.json").read_text(encoding="utf-8"))
+
+
+@app.get("/api/mcp")
+def mcp_info():
+    try:
+        import asyncio
+        from retract.mcp_server import mcp
+        tools = [{"name": t.name, "description": (t.description or "").split("\n")[0]}
+                 for t in asyncio.run(mcp.list_tools())]
+        err = ""
+    except Exception as e:  # mcp not installed
+        tools, err = [], str(e)
+    config = {"mcpServers": {"retract": {"command": sys.executable, "args": ["-m", "retract.mcp_server"],
+                                         "cwd": str(ROOT)}}}
+    return {"tools": tools, "config": config, "error": err}
+
+
 # --------------------------------------------------------------------------
 # Agent
 # --------------------------------------------------------------------------

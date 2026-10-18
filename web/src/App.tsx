@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import type { Json } from './api'
 import { get, post } from './api'
 import Chat from './components/Chat'
+import ConnectPanel from './components/ConnectPanel'
 import EvalPanel from './components/EvalPanel'
 import GraphView from './components/GraphView'
 import IngestPanel from './components/IngestPanel'
@@ -12,7 +13,7 @@ import RetractPanel from './components/RetractPanel'
 import type { GLink, GNode, Highlight } from './types'
 import { STATUS_COLOR, edgeKey, emptyHighlight } from './types'
 
-const TABS = ['Retract', 'Ingest', 'Insights', 'Memory', 'Eval'] as const
+const TABS = ['Retract', 'Ingest', 'Insights', 'Memory', 'Eval', 'Connect'] as const
 type Tab = (typeof TABS)[number]
 
 export default function App() {
@@ -22,7 +23,7 @@ export default function App() {
   const [targets, setTargets] = useState<Json>({ sources: [], decisions: [], people: [] })
   const [hl, setHl] = useState<Highlight>(emptyHighlight())
   const [focusKey, setFocusKey] = useState(0)
-  const [tab, setTab] = useState<Tab>('Retract')
+  const [tab, setTab] = useState<Tab>(window.location.hash.includes('connect') ? 'Connect' : 'Retract')
   const [drawer, setDrawer] = useState<Json | null>(null)
   const [version, setVersion] = useState(0)
   const [preset, setPreset] = useState<{ id: string; nonce: number } | undefined>()
@@ -185,6 +186,7 @@ export default function App() {
             {tab === 'Insights' && <InsightsPanel tenant={tenant} version={version} onNodeClick={openNode} onPreview={previewFromAnywhere} />}
             {tab === 'Memory' && <MemoryPanel tenant={tenant} version={version} onNodeClick={openNode} onChanged={refresh} />}
             {tab === 'Eval' && <EvalPanel />}
+            {tab === 'Connect' && <ConnectPanel onImported={setTenant} />}
           </div>
         </section>
       </main>

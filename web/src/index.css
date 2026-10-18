@@ -242,3 +242,23 @@ th { color: var(--muted); font-weight: 400; }
 tr.hl td { background: var(--mint); }
 table.small { font-size: 13px; }
 td.okc { color: var(--green); } td.badc { color: var(--red); }
+
+/* ---------- connect ---------- */
+.file-btn { font-size: 13.5px; border: 1.5px solid var(--ink); border-radius: var(--wobble); padding: 1px 10px; cursor: pointer; background: var(--sky); white-space: nowrap; }
+.file-btn input { display: none; }
+textarea.mono, .code-card pre { font-family: Consolas, 'Courier New', monospace; font-size: 12px; }
+.code-card { position: relative; background: #faf6ec; border: 2px dashed var(--ink); border-radius: 12px; padding: 8px 12px; margin: 6px 0; }
+.code-card pre { margin: 0; white-space: pre-wrap; word-break: break-all; }
+.code-card .copy { position: absolute; top: 6px; right: 6px; background: var(--card); }
+.tool-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.tabs button { font-size: 14.5px; }
+
+/* ---------- home: bring your own ---------- */
+.byo { display: grid; grid-template-columns: 1fr 1fr; gap: 34px; padding: 30px 40px 20px; }
+.byo-card { display: block; background: var(--card); border: 2.5px solid var(--ink); border-radius: var(--wobble); box-shadow: 4px 4px 0 var(--ink); padding: 20px 24px; transition: transform .15s, box-shadow .15s; }
+.byo-card:hover { transform: translate(-2px, -2px) rotate(-.4deg); box-shadow: 6px 6px 0 var(--ink); }
+.byo-card h3 { font-family: 'Gochi Hand', cursive; font-size: 30px; margin: 8px 0 4px; }
+.byo-card p { margin: 0 0 10px; color: var(--muted); font-size: 18px; }
+.byo-card code { display: inline-block; font-family: Consolas, monospace; font-size: 13.5px; color: var(--ink); background: var(--lemon); border: 1.5px solid var(--ink); border-radius: 8px; padding: 2px 8px; }
+.byo-art { width: 120px; height: 70px; }
+@media (max-width: 820px) { .byo { grid-template-columns: 1fr; padding: 20px 6px; } }
