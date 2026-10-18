@@ -41,7 +41,7 @@ Built for the WeMakeDevs × FalkorDB **Graph Hacks** hackathon. Entered in all t
 Requirements: Docker, Python 3.11+, Node 20+.
 
 ```bash
-git clone <this repo> && cd Retract_Graph
+git clone https://github.com/Krixna-Kant/Retract.git && cd Retract
 pip install -r requirements.txt
 python run.py --open          # http://127.0.0.1:8000
 ```
@@ -140,7 +140,7 @@ and a conflicting value is flagged CONTESTED.
 ```json
 {
   "mcpServers": {
-    "retract": { "command": "python", "args": ["-m", "retract.mcp_server"], "cwd": "/path/to/Retract_Graph" }
+    "retract": { "command": "python", "args": ["-m", "retract.mcp_server"], "cwd": "/path/to/Retract" }
   }
 }
 ```
