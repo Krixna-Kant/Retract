@@ -253,6 +253,7 @@ export default function Home() {
         </a>
         <div className="nav-links">
           <a href="#how" onClick={(e) => { e.preventDefault(); document.getElementById('how')?.scrollIntoView({ behavior: 'smooth' }) }}>How it works</a>
+          <a href="#byo" onClick={(e) => { e.preventDefault(); document.getElementById('byo')?.scrollIntoView({ behavior: 'smooth' }) }}>Bring your own</a>
           <a href="#numbers" onClick={(e) => { e.preventDefault(); document.getElementById('numbers')?.scrollIntoView({ behavior: 'smooth' }) }}>Results</a>
         </div>
         <a className="sk-btn primary" href="#/app">Open demo</a>
@@ -293,7 +294,7 @@ export default function Home() {
         ))}
       </section>
 
-      <section className="story">
+      <section id="byo" className="story">
         <h2 className="section-title reveal">Bring your own</h2>
         <div className="byo">
           <a className="byo-card reveal" href="#/app/connect">
